@@ -6,7 +6,7 @@ export default {
   ],
   theme: {
     m:{
-      'auto': '0px auto',
+      'auto': '1110px auto',
     },
     w:{
      'form': '600px',   

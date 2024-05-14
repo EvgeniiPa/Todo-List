@@ -10,8 +10,8 @@ import axios from "axios"
 export default function Form(){
     const [id,setId] = useState(0)
     const [items, setItems] = useState([])
-    const [textValue, setTextValue] = useState('')
-    const [nameValue, setNameValue] = useState('')
+    const [titleValue, setTitleValue] = useState('')
+    const [descriptionValue, setDescriptionValue] = useState('')
     const [checkInputs, setCheckInputs] = useState(true)
     const [editCheck, setEditCheck] = useState(null)
     const [editTitle, setEditTitle] = useState('')
@@ -38,9 +38,9 @@ export default function Form(){
 
     function addValue(){
         setId(id+1)
-        setItems([...items, {id: id, nameTodo: nameValue, text: textValue, status: false}])
-        setTextValue('')
-        setNameValue('')
+        setItems([...items, {id: id, nameTodo: titleValue, text: descriptionValue, status: false}])
+        setDescriptionValue('')
+        setTitleValue('')
     }
 
     function deleteValue(index){
@@ -50,8 +50,8 @@ export default function Form(){
     function clearList(){
         setItems([])
         setId(0)
-        setTextValue('')
-        setNameValue('')
+        setDescriptionValue('')
+        setTitleValue('')
     }
 
     function editCurrentTodo(index){
@@ -74,90 +74,98 @@ export default function Form(){
 
 
     return(
-        <form className="flex flex-col m-auto w-96 mt-10 bg-green-100 rounded-md" onSubmit={(e)=>e.preventDefault()}>
-            <span className="font-bold m-auto">Todo List</span>
-            <div className="flex flex-col my-3">
-                <Input
-                    placeholder='Title...' 
-                    type='text' 
-                    onChange={(e)=> setNameValue(e.target.value)} 
-                    value={nameValue}
-                    maxlength='25'/>
-                <Input 
-                    placeholder='Description...' 
-                    type='text'  
-                    onChange={(e)=> setTextValue(e.target.value)} 
-                    value={textValue}
-                    maxlength='25'/>
-                <div className="flex justify-between mt-3">
-                     <Button text='Add Item' onClick={()=>{
-                        if(textValue !== '' && nameValue !== ''){
-                            setCheckInputs(false)
-                            addValue()
-                            console.log(checkInputs)
-                        }             
-                     }}/>
-                     <Button text='Clear List'onClick={()=>clearList()}/>
-                </div>
-            </div>
-            {checkInputs && <span className="m-auto uppercase font-bold">Input your todo</span>}
-
-            {items.length !== 0 && items.map((item, index)=>{
-                return(
-                <>
-                    <div className="flex flex-wrap justify-between items-center m-4  p-2 border-2 border-emerald-500 rounded" key={item.id + index}> 
-
-                        {editCheck === index ?
-                            <div >
-                                <span className="font-bold">Edit Todo</span>
-                                <div className="flex gap-2">
-                                    <Input
-                                        placeholder='Title...' 
-                                        type='text' 
-                                        onChange={(e)=> setEditTitle(e.target.value)} 
-                                        value={editTitle}
-                                        maxlength='25'/>
-                                    <Input 
-                                        placeholder='Description...' 
-                                        type='text'  
-                                        onChange={(e)=> setEditDescription(e.target.value)} 
-                                        value={editDescription}
-                                        maxlength='25'/>
-                                </div>
-                                <Button text='Save Edit' onClick={()=>editDescription.length !== 0 && editTitle.length !== 0 && editCurrentTodo(index)}/>
-                            </div>
-                         : 
-
-                        <div key={item.id}>
-
-                            <div className="flex flex-col">
-                                <span className="font-bold" style={{ textDecoration: item.status ? 'line-through' : ''}}>Задание №{item.id}</span>
-                                <div style={{ textDecoration: item.status ? 'line-through' : ''}}>{item.nameTodo}</div>
-                                <div style={{ textDecoration: item.status ? 'line-through' : ''}}>{item.text}</div>
-                            </div>
-                            <div className="flex justify-between gap-2">
-                                <Button text='Delete Todo' onClick={()=>{
-                                    deleteValue(item.id)
+        <>
+             {bonusCat ? 
+                <div className='flex flex-col m-auto  items-center w-96 mt-10 bg-green-100 rounded-md border-lime-700 border-2'> 
+                    <span>Ты все сделал(а), можешь позвать котика!</span>
+                    <Button text='Котик' onClick={()=> getCat()}/>
+                    <div className='w-42 h-42'>
+                       {urlCat !== '' ? <img src={`${urlCat}`} alt="cat"/> : <>Нажми на кнопку</>}
+                    </div>
+                    <Button text='Вернуться к списку дел' onClick={()=>setBonusCat(false)}/>
+                 </div> : 
+                <form 
+                    className="flex flex-col m-auto w-96 mt-10 bg-green-100 rounded-md border-lime-700 border-2"
+                    onSubmit={(e)=>e.preventDefault()}>
+                        <span className="font-bold m-auto">Todo List</span>
+                        <div className="flex flex-col items-center my-3">
+                        <Input
+                            placeholder='Title...' 
+                            type='text' 
+                            onChange={(e)=> setTitleValue(e.target.value)} 
+                            value={titleValue}
+                            maxlength='30'/>
+                        <span>{30 - titleValue.length}</span>
+                        <Input 
+                            placeholder='Description...' 
+                            type='text'  
+                            onChange={(e)=> setDescriptionValue(e.target.value)} 
+                            value={descriptionValue}
+                            maxlength='30'/>
+                        <span>{30 - descriptionValue.length}</span>
+                            <div className="flex w-full justify-between mt-3">
+                                <Button text='Add Item' onClick={()=>{
+                                    if(descriptionValue !== '' && titleValue !== ''){
+                                        setCheckInputs(false)
+                                        addValue()
+                                        console.log(checkInputs)
+                                    }             
                                 }}/>
-                                <Button text='Edit Todo' onClick={()=>{!items[index].status && setEditCheck(index)}}/>
-                                <Button text='Done' onClick={()=> checkStatusTodo(index)}/>
+                                <Button text='Clear List'onClick={()=>clearList()}/>
+                            </div>
+                        </div>
+                {checkInputs && <span className="m-auto uppercase font-bold">Input your todo</span>}
+    
+                {items.length !== 0 && items.map((item, index)=>{
+                    return(
+                    <>
+                        <div className="flex flex-wrap justify-between items-center m-4  p-2 border-2 border-emerald-500 rounded" key={item.id + index}> 
+    
+                            {editCheck === index ?
+                                <div >
+                                    <span className="font-bold">Edit Todo</span>
+                                    <div className="flex gap-2">
+                                        <Input
+                                            placeholder='Title...' 
+                                            type='text' 
+                                            onChange={(e)=> setEditTitle(e.target.value)} 
+                                            value={editTitle}
+                                            maxlength='25'/>
+                                        <Input 
+                                            placeholder='Description...' 
+                                            type='text'  
+                                            onChange={(e)=> setEditDescription(e.target.value)} 
+                                            value={editDescription}
+                                            maxlength='25'/>
+                                    </div>
+                                    <Button text='Save Edit' onClick={()=>editDescription.length !== 0 && editTitle.length !== 0 && editCurrentTodo(index)}/>
+                                </div>
+                            : 
+    
+                            <div key={item.id}>
+    
+                                <div className="flex flex-col">
+                                    <span className="font-bold" style={{ textDecoration: item.status ? 'line-through' : ''}}>Задание №{item.id}</span>
+                                    <div style={{ textDecoration: item.status ? 'line-through' : ''}}>{item.nameTodo}</div>
+                                    <div style={{ textDecoration: item.status ? 'line-through' : ''}}>{item.text}</div>
+                                </div>
+                                <div className="flex justify-between gap-2">
+                                    <Button text='Delete Todo' onClick={()=>{
+                                       !items[index].status && deleteValue(item.id)
+                                    }}/>
+                                    <Button text='Edit Todo' onClick={()=>{!items[index].status && setEditCheck(index)}}/>
+                                    <Button text='Done' onClick={()=> checkStatusTodo(index)}/>
+                                </div>  
+    
                             </div>  
+    
+                            }       
+                        </div> 
+                    </>
+                    )
+                })}
+                </form>}
 
-                        </div>  
-
-                        }       
-                    </div> 
-                </>
-                )
-             })}
-
-           {bonusCat && <div className='m-auto flex flex-col items-center w-96 mt-12'> 
-                <span>Ты все сделал(а), можешь позвать котика!</span>
-                <Button text='Котик' onClick={()=> getCat()}/>
-                <div className='w-42 h-42'>
-                    <img src={`${urlCat}`} alt="cat"/>
-                </div>
-            </div>}
-        </form>
+        </>
     )
 }
