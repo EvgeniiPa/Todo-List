@@ -95,14 +95,14 @@ export default function Form(){
                             onChange={(e)=> setTitleValue(e.target.value)} 
                             value={titleValue}
                             maxlength='30'/>
-                        <span>{30 - titleValue.length}</span>
+                        <span>{`Количество символов: ${30 - titleValue.length}`}</span>
                         <Input 
                             placeholder='Description...' 
                             type='text'  
                             onChange={(e)=> setDescriptionValue(e.target.value)} 
                             value={descriptionValue}
                             maxlength='30'/>
-                        <span>{30 - descriptionValue.length}</span>
+                        <span>{`Количество символов: ${30 - descriptionValue.length}`}</span>
                             <div className="flex w-full justify-between mt-3">
                                 <Button text='Add Item' onClick={()=>{
                                     if(descriptionValue !== '' && titleValue !== ''){
